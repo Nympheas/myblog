@@ -7,12 +7,12 @@ import { Post, PostMetadata } from '../types/blog';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-export async function getPostBySlug(slug: string): Promise<Post> {
+export async function getPostById(id: string): Promise<Post> {
   try {
-    const fullPath = path.join(postsDirectory, `${slug}.md`);
+    const fullPath = path.join(postsDirectory, `${id}.md`);
     
     if (!fs.existsSync(fullPath)) {
-      throw new Error(`Post not found: ${slug}`);
+      throw new Error(`Post not found: ${id}`);
     }
 
     const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -23,7 +23,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
       .process(content);
       
     return {
-      id: slug,
+      id,
       contentHtml: processedContent.toString(),
       title: data.title || '',
       date: data.date ? new Date(data.date).toISOString() : '',
@@ -33,7 +33,7 @@ export async function getPostBySlug(slug: string): Promise<Post> {
       coverImage: data.coverImage || '',
     };
   } catch (error) {
-    console.error(`Error in getPostBySlug for ${slug}:`, error);
+    console.error(`Error in getPostById for ${id}:`, error);
     throw error;
   }
 }
@@ -49,13 +49,13 @@ export function getAllPosts(): PostMetadata[] {
     const posts = files
       .filter(file => file.endsWith('.md'))
       .map(file => {
-        const slug = file.replace(/\.md$/, '');
+        const id = file.replace(/\.md$/, '');
         const fullPath = path.join(postsDirectory, file);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data } = matter(fileContents);
 
         return {
-          id: slug,
+          id,
           title: data.title || '',
           date: data.date ? new Date(data.date).toISOString() : '',
           excerpt: data.excerpt || '',

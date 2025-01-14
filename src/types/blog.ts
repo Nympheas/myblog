@@ -11,4 +11,3 @@ export interface PostMetadata {
   export interface Post extends PostMetadata {
     contentHtml: string;
   }
-  

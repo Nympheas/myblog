@@ -1,5 +1,5 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
-import { getAllPosts, getPostBySlug } from '../../lib/posts';
+import { getAllPosts, getPostById } from '../../lib/posts';
 import { Post } from '../../types/blog';
 import ErrorPage from 'next/error';
 import Image from 'next/image';
@@ -12,7 +12,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = getAllPosts();
   return {
     paths: posts.map(post => ({
-      params: { slug: post.id }
+      params: { id: post.id }
     })),
     fallback: 'blocking'
   };
@@ -20,8 +20,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<PostPageProps> = async ({ params }) => {
   try {
-    const slug = params?.slug as string;
-    const post = await getPostBySlug(slug);
+    const id = params?.id as string;
+    const post = await getPostById(id);
     return {
       props: { post },
       revalidate: 60,
